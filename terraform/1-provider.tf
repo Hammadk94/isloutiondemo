@@ -1,7 +1,7 @@
 # https://registry.terraform.io/providers/hashicorp/google/latest/docs
 provider "google" {
-  project = "devops-v4"
-  region  = "us-central1"
+  project = "FinanceAgentFiverr "
+  region  = "us-east1-b"
 }
 
 # https://www.terraform.io/language/settings/backends/gcs
