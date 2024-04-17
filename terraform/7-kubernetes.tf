@@ -29,7 +29,7 @@ resource "google_container_cluster" "primary" {
   }
 
   workload_identity_config {
-    workload_pool = "financeAgentFiverr.svc.id.goog"
+    workload_pool = "financeagentfiverr.svc.id.goog"
   }
 
   ip_allocation_policy {

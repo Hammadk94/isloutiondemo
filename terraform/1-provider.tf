@@ -1,6 +1,6 @@
 # https://registry.terraform.io/providers/hashicorp/google/latest/docs
 provider "google" {
-  project = "FinanceAgentFiverr "
+  project = "financeagentfiverr"
   region  = "us-east1-b"
 }
 
