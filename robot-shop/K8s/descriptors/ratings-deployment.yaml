@@ -1,33 +1,29 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  annotations:
-    kompose.cmd: kompose -f ../docker-compose.yaml convert
-    kompose.version: 1.10.0 (8bb0907)
-  creationTimestamp: null
+  name: ratings
   labels:
     io.kompose.service: ratings
-  name: ratings
 spec:
   replicas: 1
-  strategy: {}
+  selector:
+    matchLabels:
+      io.kompose.service: ratings
   template:
     metadata:
-      creationTimestamp: null
       labels:
         io.kompose.service: ratings
     spec:
       containers:
-      - image: linuxacademycontent/rs-ratings:latest
-        name: ratings
+      - name: ratings
+        image: linuxacademycontent/rs-ratings:latest
         ports:
-        - containerPort: 3306
+        - containerPort: 3306  # This port should be updated to match the actual port used by the ratings service
         resources:
           limits:
-            cpu: 200m
-            memory: 100Mi
+            cpu: "200m"
+            memory: "100Mi"
           requests:
-            cpu: 100m
-            memory: 50Mi
+            cpu: "100m"
+            memory: "50Mi"
       restartPolicy: Always
-status: {}
