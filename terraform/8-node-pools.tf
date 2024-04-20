@@ -13,7 +13,11 @@ resource "google_container_node_pool" "general" {
     auto_repair  = true
     auto_upgrade = true
   }
-
+  
+  autoscaling {
+    min_node_count = 0
+    max_node_count = 10
+  }
   node_config {
     preemptible  = false
     machine_type = "e2-small"
