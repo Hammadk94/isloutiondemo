@@ -42,6 +42,16 @@ resource "google_container_cluster" "cluster1dev" {
     enable_private_endpoint = false
     master_ipv4_cidr_block  = "172.16.0.0/28"
   }
+    # Node pool configuration for cluster1
+  node_pool {
+    name       = "pool1"
+    machine_type = "e2-medium"
+    initial_node_count = 1
+    autoscaling {
+      min_node_count = 1
+      max_node_count = 5
+    }
+  }
 }
 
 # Define the second GKE cluster
@@ -87,5 +97,15 @@ resource "google_container_cluster" "cluster2prod" {
     enable_private_nodes    = true
     enable_private_endpoint = false
     master_ipv4_cidr_block  = "172.16.1.0/28"  # Different CIDR block for the second cluster
+  }
+    # Node pool configuration for cluster2
+  node_pool {
+    name       = "pool2"
+    machine_type = "e2-medium"
+    initial_node_count = 1
+    autoscaling {
+      min_node_count = 1
+      max_node_count = 5
+    }
   }
 }
