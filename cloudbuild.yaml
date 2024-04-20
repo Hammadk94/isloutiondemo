@@ -1,88 +1,39 @@
-# only Highlighted objects need to be changed with respect to task details.
-substitutions:
-  _SOURCE_REPO: https://source.developers.google.com/projects/dev-mfrm-sandbox/repos/github_mfrm-data-devops_gcp-ops/moveable-aliases/working-branch/paths/2022/March/11/US_555_GCP_Demo_cloud_build/Cloud-Functions/load_einstein_data_to_bq
-  _SERVICE_ACCOUNT: svc-cloudfunction@dev-mfrm-sandbox.iam.gserviceaccount.com
-options:
-    dynamic_substitutions: true
-steps: # steps will be used only once in a script.
-#CloudFunction
-- name: 'gcr.io/cloud-builders/gcloud'
+steps:
+- name: 'gcr.io/cloud-builders/docker'
+  args: ['build', '-t', 'us-central1-docker.pkg.dev/financeagentfiverr/gke-repo/quickstart-image', './dev' ]
+  id: 'Build Docker Image'
+
+  # images:
+  # - 'us-central1-docker.pkg.dev/financeagentfiverr/gke-repo/quickstart-image'
+
+- name: 'gcr.io/cloud-builders/docker'
+  args: ['push', 'us-central1-docker.pkg.dev/financeagentfiverr/gke-repo/quickstart-image' ]
+  id: 'Push Docker Image'
+
+- name: 'gcr.io/cloud-builders/docker'
+  args: ['build', '-t', 'us-central1-docker.pkg.dev/financeagentfiverr/gke-repo/flask-image', './prod' ]
+  id: 'Build Docker Image2'
+
+  # images:
+  # - 'us-central1-docker.pkg.dev/financeagentfiverr/gke-repo/quickstart-image'
+
+- name: 'gcr.io/cloud-builders/docker'
+  args: ['push', 'us-central1-docker.pkg.dev/financeagentfiverr/gke-repo/flask-image' ]
+  id: 'Push Docker Image2'
+
+
+- name: 'google/cloud-sdk:latest'
+  entrypoint: 'sh'
   args:
-  - functions
-  - deploy
-  - load_einstein_data_to_bq #FunctionName
-  - --source=${_SOURCE_REPO}
-  - --trigger-topic=load_einstein_data_to_bq # topicname
-  - --max-instances=1
-  - --region=us-central1
-  - --entry-point=load_einstein_data_to_bq # entrypoint
-  - --memory=2048
-  - --retry
-  - --service-account=${_SERVICE_ACCOUNT}
-  - --timeout=540
-  - --runtime=python37
-#BQcreatestaement:
-- name: 'gcr.io/cloud-builders/gcloud'
-  id: 'Run Query'
-  entrypoint: 'bash'
-  args: 
-  - '-c'
+  - -xe
+  - -c
   - |
-    bq query --use_legacy_sql=false 'CREATE TABLE IF NOT EXISTS dev-mfrm-sandbox.mfrm_testing.exports AS SELECT * FROM `bigquery-public-data.austin_bikeshare.bikeshare_stations` LIMIT 1000'
-#DELETESTATEMENT:    
-  - name: gcr.io/cloud-builders/gcloud
-    args:
-      - '-c'
-      - |
-        bq query --use_legacy_sql=false 'delete from `dev-mfrm-sandbox.mfrm_testing.exports` where station_id = '1006''
-    id: Run Query
-    entrypoint: bash
-#INSERTSTATEMENT
-  - name: gcr.io/cloud-builders/gcloud
-    args:
-      - '-c'
-      - |
-        bq query --use_legacy_sql=false 'INSERT INTO `dev-mfrm-sandbox.mfrm_testing.exports` (station_id, name, Address)
-        VALUES (1112, "ali" , "Islamabad")'
-    id: Run Query
-    entrypoint: bash
-#BIGQUERYCOPYTABLE
-- name: 'gcr.io/cloud-builders/gcloud'
-  entrypoint: 'bash'
-  args: ['-c', 'bq cp dev-mfrm-data:dbt_skrithi.stg_customer_master qa-mfrm-data:mfrm_testing.stg_customer_master']
-#BIGQUERYARTIFACTS
-#DDL
-- name: 'gcr.io/cloud-builders/gcloud'
-  entrypoint: 'bash'
-  args: ['-c', 'bq query --use_legacy_sql=false < ./BigQuery/DDL/US60924_Change_Data_Source_For_AXProductSku_DDL_1.sql']
-#DML
-- name: 'gcr.io/cloud-builders/gcloud'
-  entrypoint: 'bash'
-  args: ['-c', 'bq query --use_legacy_sql=false < ./BigQuery/DML/US60924_Change_Data_Source_For_AXProductSku_DML_1.sql'] 
-#STOREPROCEDURE
-- name: 'gcr.io/cloud-builders/gcloud'
-  entrypoint: 'bash'
-  args: ['-c', 'bq query --use_legacy_sql=false < ./BigQuery/storedProcedure/sp_load_d365_product_sku_data.sql']
- #Multiple file copying
-- name: 'gcr.io/cloud-builders/gcloud'
-  args: 
-     - '-c'
-      - |
-       for i in ./BigQuery/storedProcedure/US_9991*.sql; # for multiple DDL, DML and SPs, for loop will be used. files in folder should be start with same prefix.
-       do
-       bq query --use_legacy_sql=false < $i;
-       done
-  id: deploy storeprocedure
-  entrypoint: 'bash'
-#SCHEDULER:
-- name: gcr.io/cloud-builders/gcloud # just invoke gcloud command in highlighted area as we use in cloud shell.
-  entrypoint: bash
-  args: ['-c', 'gcloud scheduler jobs create http load_ga_instore_mattress_matcher_traffic_yesterday_data --schedule "30 10 * * *" --time-zone="UTC" --uri="https://us-central1-dev-mfrm-sandbox.cloudfunctions.net/load_ga_instore_mattress_matcher_traffic_yesterday_data" --message-body="{“message”:”request”}"']
-#STORAGE AND COMPOSER DAGS COPY
-# this command will be used to copy multiple source file to single destination
-- name: 'gcr.io/cloud-builders/gsutil'
-  args: ['-m', 'cp', '-r', "gs://us-central1-mfrm-pipeline-c-52262bf2-bucket/dags/CheckDAGStatus.py", "gs://us-central1-mfrm-pipeline-c-52262bf2-bucket/dags/airflow_monitoring.py", "gs://dev-mfrm-sandbox_cloudbuild"]
-- name: 'gcr.io/cloud-builders/gsutil'
-  args: ['-m', 'cp', '-r', "gs://us-central1-mfrm-pipeline-c-52262bf2-bucket/dags/airflow_monitoring.py", "gs://dev-mfrm-sandbox_cloudbuild"]
+    gcloud deploy apply --file deploy/pipeline.yaml --region=us-central1
+    gcloud deploy apply --file deploy/dev.yaml --region=us-central1
+    gcloud deploy apply --file deploy/prod.yaml --region=us-central1
+    gcloud deploy releases create 'dev-release-${SHORT_SHA}' --delivery-pipeline=gke-cicd-pipeline --region=us-central1 --from-k8s-manifest=./kubernetes/dev.yaml
+    gcloud deploy releases create 'prod-release-${SHORT_SHA}' --delivery-pipeline=gke-cicd-pipeline --region=us-central1--from-k8s-manifest=./kubernetes/prod.yaml
 
 
+options:
+  logging: CLOUD_LOGGING_ONLY
