@@ -1,7 +1,7 @@
 # Node Pool for Cluster 1
-resource "google_container_node_pool" "node_pool_cluster3test" {
-  name       = "node-pool-cluster3test"
-  cluster    = google_container_cluster.cluster3test.name
+resource "google_container_node_pool" "node_pool_cluster1" {
+  name       = "node-pool-cluster1"
+  cluster    = google_container_cluster.cluster1.name
   node_count = 1
 
   management {
@@ -24,10 +24,10 @@ resource "google_container_node_pool" "node_pool_cluster3test" {
   }
 }
 
-# Node Pool for Cluster 4
-resource "google_container_node_pool" "node_pool_cluster4" {
-  name       = "node-pool-cluster4"
-  cluster    = google_container_cluster.cluster4.name
+# Node Pool for Cluster 2
+resource "google_container_node_pool" "node_pool_cluster2" {
+  name       = "node-pool-cluster2"
+  cluster    = google_container_cluster.cluster2.name
   node_count = 1
 
   management {

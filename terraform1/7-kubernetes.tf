@@ -1,6 +1,6 @@
 # https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/container_cluster
-resource "google_container_cluster" "cluster3test" {
-  name                     = "cluster3test"
+resource "google_container_cluster" "cluster1" {
+  name                     = "cluster1"
   location                 = "us-central1"
   remove_default_node_pool = true
   initial_node_count       = 1
@@ -45,8 +45,8 @@ resource "google_container_cluster" "cluster3test" {
 }
 
 # Define the second GKE cluster
-resource "google_container_cluster" "cluster4" {
-  name                     = "cluster4"
+resource "google_container_cluster" "cluster2" {
+  name                     = "cluster2"
   location                 = "us-central1"
   remove_default_node_pool = true
   initial_node_count       = 1
