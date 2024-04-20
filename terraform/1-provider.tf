@@ -7,7 +7,7 @@ provider "google" {
 # https://www.terraform.io/language/settings/backends/gcs
 terraform {
   backend "gcs" {
-    bucket = "isolution-tf-state-staging"
+    bucket = "isolution-cluster-1"
     prefix = "terraform/state"
   }
   required_providers {
