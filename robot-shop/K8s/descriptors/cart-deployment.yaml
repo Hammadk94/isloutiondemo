@@ -5,7 +5,7 @@ metadata:
   labels:
     io.kompose.service: cart
 spec:
-  replicas: 2
+  replicas: 3
   strategy:
     type: RollingUpdate
     rollingUpdate:
