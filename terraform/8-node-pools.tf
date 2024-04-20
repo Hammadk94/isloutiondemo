@@ -55,7 +55,7 @@ resource "google_container_node_pool" "prod" {
       #key    = "instance_type"
       #value  = "spot"
       #effect = "NO_SCHEDULE"
-    }
+    #}
 
     service_account = google_service_account.kubernetes.email
     oauth_scopes = [
