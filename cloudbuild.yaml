@@ -1,24 +1,24 @@
 steps:
 - name: 'gcr.io/cloud-builders/docker'
-  args: ['build', '-t', 'us-central1-docker.pkg.dev/financeagentfiverr/isol-demo/quickstart-image', './dev' ]
+  args: ['build', '-t', 'us-central1-docker.pkg.dev/financeagentfiverr/gke-repo/quickstart-image', './dev' ]
   id: 'Build Docker Image'
 
   # images:
   # - 'us-central1-docker.pkg.dev/financeagentfiverr/gke-repo/quickstart-image'
 
 - name: 'gcr.io/cloud-builders/docker'
-  args: ['push', 'us-central1-docker.pkg.dev/financeagentfiverr/isol-demo/quickstart-image' ]
+  args: ['push', 'us-central1-docker.pkg.dev/financeagentfiverr/gke-repo/quickstart-image' ]
   id: 'Push Docker Image'
 
 - name: 'gcr.io/cloud-builders/docker'
-  args: ['build', '-t', 'us-central1-docker.pkg.dev/financeagentfiverr/isol-demo/flask-image', './prod' ]
+  args: ['build', '-t', 'us-central1-docker.pkg.dev/financeagentfiverr/gke-repo/flask-image', './prod' ]
   id: 'Build Docker Image2'
 
   # images:
   # - 'us-central1-docker.pkg.dev/financeagentfiverr/gke-repo/quickstart-image'
 
 - name: 'gcr.io/cloud-builders/docker'
-  args: ['push', 'us-central1-docker.pkg.dev/financeagentfiverr/isol-demo/flask-image' ]
+  args: ['push', 'us-central1-docker.pkg.dev/financeagentfiverr/gke-repo/flask-image' ]
   id: 'Push Docker Image2'
 
 
